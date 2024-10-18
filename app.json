@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/chatbot.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.infoseniorcare.chatbot"
     },
     "web": {
       "bundler": "metro",
@@ -28,10 +29,23 @@
     },
     "plugins": [
       "expo-router"
-     
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "1fd429f8-dae8-4e6b-8de4-a301ab229420"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/1fd429f8-dae8-4e6b-8de4-a301ab229420"
     }
   }
 }
