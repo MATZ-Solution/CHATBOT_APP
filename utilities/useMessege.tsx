@@ -25,7 +25,6 @@ export function MessagesProvider({ children }: MessagesProviderProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoadingAnswer, setIsLoadingAnswer] = useState<boolean>(false);
   const [context, setContext] = useState<Record<string, unknown>>({});
-const [userId,setUserId]=useState<string|null>(null)
   const { sendUserMessage, sendChatbotMessage } = useSendMessage();
 
 useEffect(() => {
@@ -46,21 +45,21 @@ useEffect(() => {
     initializeChat();
   }, []); // Add `userId` as a dependency
 
-  useEffect(() => {
-    const getUserId = async () => {
-      try {
-        const storedUserId = await AsyncStorage.getItem("userId");
-        console.log("Stored User ID:", storedUserId); // Log stored user ID
-        setUserId(storedUserId);
-      } catch (error) {
-        console.error("Error initializing chat: ", error);
-      }
-    }
-    getUserId();
-  },[])
+  // useEffect(() => {
+  //   const getUserId = async () => {
+  //     try {
+  //       const storedUserId = await AsyncStorage.getItem("userId");
+  //       console.log("Stored User ID:", storedUserId); // Log stored user ID
+  //       setUserId(storedUserId);
+  //     } catch (error) {
+  //       console.error("Error initializing chat: ", error);
+  //     }
+  //   }
+  //   getUserId();
+  // },[])
 
 
-  const addMessage = async (message: Message) => {
+  const addMessage = async (message: Message,userId:string) => {
     console.log("User ID on addMessage:", userId); // Log user ID
     if (!userId) return;
 

@@ -22,7 +22,7 @@ export default function RootLayout() {
   });
   const [queryClient] = useState(() => new QueryClient());
   useEffect(() => {
-    // AsyncStorage.clear();
+    AsyncStorage.clear();
     const checkAuth = async () => {
       const isAuthenticated = await isUserAuthenticated();
       if (!isAuthenticated) {

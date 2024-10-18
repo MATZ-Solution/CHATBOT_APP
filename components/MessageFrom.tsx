@@ -1,26 +1,85 @@
-import React, { useState } from 'react';
-import { Button, StyleSheet, TextInput, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Button, StyleSheet, TextInput, View, Platform } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Voice from '@react-native-voice/voice';
 import { useMessages } from '@/utilities/useMessege';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const MessageFrom = () => {
+const MessageForm = () => {
+  const [userId, setUserId] = useState<string | null>(null);
   const [content, setContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isRecording, setIsRecording] = useState<boolean>(false); // State to handle recording status
   const { addMessage } = useMessages();
+
+  useEffect(() => {
+    // Voice event listeners for results and errors
+    Voice.onSpeechResults = onSpeechResults;
+    Voice.onSpeechError = onSpeechError;
+
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
 
   const handleSubmit = async () => {
     if (content.trim() === '') return;
 
     const newMessage = {
-      parts:content,
+      parts: content,
       role: 'user',
     };
 
     setIsLoading(true);
-    await addMessage(newMessage); // Make sure this function handles the message correctly
+    await addMessage(newMessage, userId);
     setContent('');
     setIsLoading(false);
-};
+  };
+
+  const getUserId = async () => {
+    try {
+      const storedUserId = await AsyncStorage.getItem('userId');
+      console.log('Stored User ID:', storedUserId);
+      setUserId(storedUserId);
+    } catch (error) {
+      console.error('Error initializing chat: ', error);
+    }
+  };
+
+  useEffect(() => {
+    getUserId();
+  }, []);
+
+  // Start recording speech
+  const startRecording = async () => {
+    try {
+      setIsRecording(true);
+      await Voice.start('en-US');
+    } catch (error) {
+      console.error('Error starting recording: ', error);
+    }
+  };
+
+  // Stop recording speech
+  const stopRecording = async () => {
+    try {
+      setIsRecording(false);
+      await Voice.stop();
+    } catch (error) {
+      console.error('Error stopping recording: ', error);
+    }
+  };
+
+  // Handle speech results
+  const onSpeechResults = (event: any) => {
+    const speechText = event.value[0];
+    setContent(speechText);
+  };
+
+  // Handle speech errors
+  const onSpeechError = (error: any) => {
+    console.error('Speech Error: ', error);
+  };
 
   return (
     <View style={styles.inputContainer}>
@@ -30,6 +89,13 @@ const MessageFrom = () => {
         onChangeText={(text) => setContent(text)}
         placeholder="Enter your message..."
         multiline
+      />
+      <FontAwesome
+        // name={isRecording ? 'microphone-slash' : 'microphone'}
+        // size={24}
+        // color={isRecording ? 'red' : 'gray'}
+        onPress={isRecording ? stopRecording : startRecording} // Toggle recording
+        // style={styles.recordIcon}
       />
       <FontAwesome
         name="send"
@@ -43,9 +109,7 @@ const MessageFrom = () => {
   );
 };
 
-export default MessageFrom;
-
-
+export default MessageForm;
 
 const styles = StyleSheet.create({
   inputContainer: {
@@ -67,6 +131,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: '#f0f0f0',
     borderRadius: 20,
+    marginRight: 10,
+  },
+  recordIcon: {
+    padding: 8,
     marginRight: 10,
   },
   sendIcon: {

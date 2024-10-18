@@ -1,15 +1,38 @@
-import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, View, Text, Image, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState,useEffect } from 'react';
+import { SafeAreaView, ScrollView, View, Text, Image, Alert, BackHandler, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import MessageFrom from '../components/MessageFrom';
 import MessagesList from '../components/MessageList';
-
+import { useIsFocused } from "@react-navigation/native";
 const ChatScreen = () => {
+  const isFocused = useIsFocused();
   // Sample messages (you can replace this with your actual message data)
   const [messages, setMessages] = useState([
     { id: 1, text: 'Hello, how can I help you?' },
     { id: 2, text: 'I have a question about my order.' },
     { id: 3, text: 'Sure, please go ahead!' }
   ]);
+  useEffect(() => {
+    if (isFocused) {
+      const backAction = () => {
+        Alert.alert("Are you sure?", "Do you want to close the app?", [
+          {
+            text: "Cancel",
+            onPress: () => null,
+            style: "cancel",
+          },
+          { text: "YES", onPress: () => BackHandler.exitApp() },
+        ]);
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+
+      return () => backHandler.remove();
+    }
+  }, [isFocused]);
 
   return (
     <SafeAreaView style={styles.container}>

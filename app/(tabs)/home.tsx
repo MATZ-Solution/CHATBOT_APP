@@ -5,6 +5,7 @@ import { Feather, Fontisto, Ionicons } from '@expo/vector-icons';
 import Carousel from 'react-native-snap-carousel';
 import styles from '@/components/stylehome';
 import CarouserComp from '@/components/CarouserComp';
+import { router } from 'expo-router';
 // import styles from '@/components/stylehome';
 export default function HomeScreen() {
   
@@ -36,6 +37,9 @@ const products=[1,2,3,4,5,6]
                 
                     <Text style={styles.cardNum}>8</Text>
               </View>
+              <TouchableOpacity onPress={()=>router.navigate('/login')}>
+                <Text>login</Text>
+                </TouchableOpacity>
               <TouchableOpacity>
                 <Fontisto name="shopping-basket" size={24}  />
               </TouchableOpacity>

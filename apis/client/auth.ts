@@ -36,8 +36,9 @@ export function userLogin() {
         Toast.show({
           type: 'error',
           text1: 'Error',
+          // text2: `${error}`,
         });
-        console.error("Login error:", error);
+        // console.error("Login error:", error);
       }
     });
 
