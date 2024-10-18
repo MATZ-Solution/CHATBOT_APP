@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "chat-app",
-    "slug": "chat-app",
+    "name": "chatbot",
+    "slug": "chatbot",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/chatbot.png",
-    "scheme": "chat-app",
+    "scheme": "chatbot",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
