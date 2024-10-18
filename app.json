@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "interviews-app",
-    "slug": "interviews-app",
+    "name": "chat-app",
+    "slug": "chat-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "icon": "./assets/images/chatbot.png",
+    "scheme": "chat-app",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/chatbot.png",
         "backgroundColor": "#ffffff"
       }
     },
@@ -28,6 +28,7 @@
     },
     "plugins": [
       "expo-router"
+     
     ],
     "experiments": {
       "typedRoutes": true

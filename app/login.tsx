@@ -6,64 +6,40 @@ import {
   TouchableOpacity,
   ScrollView,
   View,
+  ActivityIndicator,
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import TextInput from "@/components/TextInput";
-import { userLogin, userRegister } from "@/apis/client/auth";
+import { userLogin } from "@/apis/client/auth";
+import { router } from "expo-router";
 
-const SignupSchema = Yup.object().shape({
-  name: Yup.string().required("Name is required"),
+const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
-  address: Yup.string(),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password")], "Passwords must match")
-    .required("Confirm password is required"),
+  password: Yup.string().required("Password is required"),
 });
 
-export default function HomeScreen() {
+const Login = () => {
+  const { userlogin, isSuccess, isPending } = userLogin();
 
-  const {
-    usersignup,
-    isPending,
-    isSuccess,
-    isError,
-
-  }=userRegister()
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.header}>Signup Form</Text>
+        <Text style={styles.header}>Log In</Text>
 
         <Formik
           initialValues={{
-            name: "",
             email: "",
             password: "",
-            confirmPassword: "",
-            address: "",
           }}
-          validationSchema={SignupSchema}
+          validationSchema={LoginSchema}
           onSubmit={(values) => {
-            // console.log(values);
-            const { name, email, password, address } = values;
-            usersignup({ name, email, password, address });
+            const { email, password } = values;
+            userlogin({ email, password });
           }}
         >
           {({ handleChange, handleSubmit, values, errors, touched }) => (
             <View>
-              <TextInput
-                placeholder="Name"
-                value={values.name}
-                onChangeText={handleChange("name")}
-              />
-              {touched.name && errors.name && (
-                <Text style={styles.errorText}>{errors.name}</Text>
-              )}
-
               <TextInput
                 placeholder="Email"
                 value={values.email}
@@ -72,11 +48,6 @@ export default function HomeScreen() {
               {touched.email && errors.email && (
                 <Text style={styles.errorText}>{errors.email}</Text>
               )}
-              <TextInput
-                placeholder="Addres"
-                value={values.address}
-                onChangeText={handleChange("address")}
-              />
 
               <TextInput
                 placeholder="Password"
@@ -88,35 +59,40 @@ export default function HomeScreen() {
                 <Text style={styles.errorText}>{errors.password}</Text>
               )}
 
-              <TextInput
-                placeholder="Confirm Password"
-                value={values.confirmPassword}
-                onChangeText={handleChange("confirmPassword")}
-                secureTextEntry={true}
-              />
-              {touched.confirmPassword && errors.confirmPassword && (
-                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-              )}
-
-              {/* Signup Button */}
+              {/* Login Button with Activity Indicator */}
               <TouchableOpacity
                 style={styles.button}
                 onPress={() => handleSubmit()}
+                disabled={isPending} // Disable button while loading
               >
-                <Text style={styles.buttonText}>Sign Up</Text>
+                {isPending ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={styles.buttonText}>Log In</Text>
+                )}
               </TouchableOpacity>
+
+              <View style={styles.signupContainer}>
+                <Text>Don't have an account? </Text>
+                <TouchableOpacity onPress={() => router.navigate("/signup")}>
+                  <Text style={styles.signupText}>Signup</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
         </Formik>
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
+
+export default Login;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    marginTop: 100,
   },
   scrollContainer: {
     justifyContent: "center",
@@ -129,9 +105,11 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#007bff",
-    padding: 15,
+    padding: 12,
     borderRadius: 5,
     marginTop: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonText: {
     color: "#fff",
@@ -143,5 +121,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 10,
     marginLeft: 5,
+  },
+  signupContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 7,
+  },
+  signupText: {
+    color: "blue",
   },
 });
