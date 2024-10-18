@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, StyleSheet, TextInput, View, Platform } from 'react-native';
+import { Button, StyleSheet, TextInput, View } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Voice from '@react-native-voice/voice';
 import { useMessages } from '@/utilities/useMessege';
@@ -13,14 +13,23 @@ const MessageForm = () => {
   const { addMessage } = useMessages();
 
   useEffect(() => {
-    // Voice event listeners for results and errors
-    Voice.onSpeechResults = onSpeechResults;
     Voice.onSpeechError = onSpeechError;
+    Voice.onSpeechResults = onSpeechResults;
 
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
   }, []);
+
+  const onSpeechResults = (event: any) => {
+    const speechText = event.value[0]; // Get the first result from the recognized speech
+    setContent(speechText); // Set the recognized text to the content state
+    console.log('Recognized speech:', speechText); // Console log the recognized text
+  };
+
+  const onSpeechError = (error: any) => {
+    console.error('Speech Error: ', error);
+  };
 
   const handleSubmit = async () => {
     if (content.trim() === '') return;
@@ -32,7 +41,7 @@ const MessageForm = () => {
 
     setIsLoading(true);
     await addMessage(newMessage, userId);
-    setContent('');
+    setContent(''); // Clear input after sending
     setIsLoading(false);
   };
 
@@ -70,17 +79,6 @@ const MessageForm = () => {
     }
   };
 
-  // Handle speech results
-  const onSpeechResults = (event: any) => {
-    const speechText = event.value[0];
-    setContent(speechText);
-  };
-
-  // Handle speech errors
-  const onSpeechError = (error: any) => {
-    console.error('Speech Error: ', error);
-  };
-
   return (
     <View style={styles.inputContainer}>
       <TextInput
@@ -91,11 +89,11 @@ const MessageForm = () => {
         multiline
       />
       <FontAwesome
-        // name={isRecording ? 'microphone-slash' : 'microphone'}
-        // size={24}
-        // color={isRecording ? 'red' : 'gray'}
+        name={isRecording ? 'microphone-slash' : 'microphone'}
+        size={24}
+        color={isRecording ? 'red' : 'gray'}
         onPress={isRecording ? stopRecording : startRecording} // Toggle recording
-        // style={styles.recordIcon}
+        style={styles.recordIcon}
       />
       <FontAwesome
         name="send"
